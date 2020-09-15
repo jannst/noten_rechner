@@ -19,23 +19,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Subject = (props) => {
-    const [esaExam, setEsaExam] = React.useState(null);
-    const [esaOralExam, setEsaOralExam] = React.useState(null);
-    const [classReport, setClassReport] = React.useState(null);
+    const [esaExam, setEsaExam] = React.useState('');
+    const [esaOralExam, setEsaOralExam] = React.useState('');
+    const [classReport, setClassReport] = React.useState('');
     const [result, setResult] = React.useState(null);
     const classes = useStyles();
 
     const calculateResult = () => {
         if(classReport) {
-            if(props.hasEsa && esaExam && esaOralExam) {
-                let esaGrade = (esaExam + esaOralExam) / 2;
+            if(props.isMainSubject && esaExam && esaOralExam) {
+                let esaGrade = 0.5*esaExam + 0.5*esaOralExam;
                 //esa test wird mit 40, Zeugnisnote mit 60 gewertet
-                setResult(0.4*esaGrade + 0.6*classReport)
+                updateResult(0.4*esaGrade + 0.6*classReport)
             }
-            else if(!props.hasEsa) {
-                setResult(classReport);
+            else if(!props.isMainSubject) {
+                updateResult(classReport);
             }
         }
+    }
+
+    const updateResult = (grade) => {
+        setResult(grade);
+        props.callback({
+            "isMainSubject": props.isMainSubject,
+            "subjectTitle": props.title,
+            "grade": grade
+        });
     }
 
     useEffect(() => {
@@ -49,7 +58,7 @@ export const Subject = (props) => {
                 <Typography className={classes.title} gutterBottom>
                     {props.title}
                 </Typography>
-                {props.hasEsa &&
+                {props.isMainSubject &&
                     <Box display="flex" justifyContent="space-between">
                         <FormControl className={classes.formControl}>
                             <InputLabel id="examLabel">ESA Schriftlich</InputLabel>
@@ -109,8 +118,8 @@ export const Subject = (props) => {
                     </Select>
                 </FormControl>
 
-                {props.hasEsa &&
-                <Typography style={{marginTop: 10}}>Ergebnisnote: {result}</Typography>
+                {props.isMainSubject && result &&
+                <Typography style={{marginTop: 10}}>Ergebnisnote: {(Math.round(result * 10) / 10)}</Typography>
                 }
             </CardContent>
         </Card>
