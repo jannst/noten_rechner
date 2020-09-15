@@ -122,7 +122,7 @@ function App() {
                 </AppBar>
                 <main className={clsx(classes.content)}>
                     <div className={classes.drawerHeader} />
-                    <Route exact path="/" component={Home} />
+                    <Route exact path="/" component={Esa} />
                     <Route exact path="/esa" component={Esa} />
                     <Route exact path="/about" component={About} />
                 </main>
